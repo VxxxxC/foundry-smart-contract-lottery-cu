@@ -11,7 +11,7 @@ import {VRFV2PlusClient} from "@chainlink/contracts/src/v0.8/vrf/dev/libraries/V
  * @dev This implements the Chainlink VRF v2.5 Chainlink
  */
 
-contract Raffle {
+contract Raffle is VRFConsumerBaseV2Plus{
     /* Erros */
     error SendMoreEthToRaffle();
 
@@ -24,7 +24,9 @@ contract Raffle {
     /* Events */
     event RaffleEntered(address indexed player, uint256 amount);
 
-    constructor(uint256 _entranceFee, uint256 _interval) {
+    constructor(uint256 _entranceFee, uint256 _interval, address s_vrfCoordinator) {
+        /* @dev Inheritance Chainlink VRF library, also need to inheritance the library constructor */
+        VRFConsumerBaseV2Plus(s_vrfCoordinator);
         i_entranceFee = _entranceFee;
         i_interval = _interval;
         lasTimeStamp = block.timestamp;
