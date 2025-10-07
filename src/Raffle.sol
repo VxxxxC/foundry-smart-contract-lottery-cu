@@ -16,6 +16,7 @@ abstract contract Raffle is VRFConsumerBaseV2Plus {
     error SendMoreEthToRaffle();
     error TransferFailed();
     error RaffleNotOpen();
+    error Raffle_UpkeepNotNeeded(uint256 currentBalance, uint256 numPlayers, uint256 raffleState);
 
     /* Type Declarations */
     enum RaffleState {
@@ -98,7 +99,7 @@ abstract contract Raffle is VRFConsumerBaseV2Plus {
     function performUpkeep(bytes calldata performData) external {
         (bool upkeepNeeded, ) = checkUpkeep("");
         if(!upkeepNeeded){
-            revert();
+            revert Raffle_UpkeepNotNeeded(address(this).balance, s_players.length, uint256(s_raffleState));
         }
         
         s_raffleState = RaffleState.CALCULATING;
