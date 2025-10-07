@@ -84,7 +84,7 @@ abstract contract Raffle is VRFConsumerBaseV2Plus {
  * @param checkData This is the data the keeper nodes will
  * @return upkeepNeeded - true if it is time to restart the lottery
  */
-    function checkUpkeep(bytes calldata checkData )public view returns (bool upkeepNeeded, bytes memory performData ){
+    function checkUpkeep(bytes memory checkData)public view returns (bool upkeepNeeded, bytes memory performData){
         // Check to see if enough time has passed
         bool timeHsPassed = ((block.timestamp - s_lastTimeStamp) >= i_interval);
         bool isOpen = s_raffleState == RaffleState.OPEN;
@@ -95,12 +95,12 @@ abstract contract Raffle is VRFConsumerBaseV2Plus {
         return (upkeepNeeded, "");
     }
 
-    function pickWinner() external {
-        // Check to see if enough time has passed
-        if ((block.timestamp - s_lastTimeStamp) < i_interval) {
+    function performUpkeep(bytes calldata performData) external {
+        (bool upkeepNeeded, ) = checkUpkeep("");
+        if(!upkeepNeeded){
             revert();
         }
-
+        
         s_raffleState = RaffleState.CALCULATING;
 
         VRFV2PlusClient.RandomWordsRequest memory request = VRFV2PlusClient
