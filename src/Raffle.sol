@@ -11,8 +11,8 @@ import {VRFV2PlusClient} from "@chainlink/contracts/src/v0.8/vrf/dev/libraries/V
  * @dev This implements the Chainlink VRF v2.5 Chainlink
  */
 
-abstract contract Raffle is VRFConsumerBaseV2Plus {
-    /* Erros */
+contract Raffle is VRFConsumerBaseV2Plus {
+    /* Errors */
     error SendMoreEthToRaffle();
     error TransferFailed();
     error RaffleNotOpen();
@@ -92,8 +92,8 @@ abstract contract Raffle is VRFConsumerBaseV2Plus {
      * @return upkeepNeeded - true if it is time to restart the lottery
      **/
     function checkUpkeep(
-        bytes memory /*checkData*/
-    ) public view returns (bool upkeepNeeded, bytes memory /*performData*/) {
+        bytes memory checkData
+    ) public view returns (bool upkeepNeeded, bytes memory performData) {
         // Check to see if enough time has passed
         bool timeHsPassed = ((block.timestamp - s_lastTimeStamp) >= i_interval);
         bool isOpen = s_raffleState == RaffleState.OPEN;
@@ -104,7 +104,7 @@ abstract contract Raffle is VRFConsumerBaseV2Plus {
         return (upkeepNeeded, "");
     }
 
-    function performUpkeep(bytes calldata /*performData*/) external {
+    function performUpkeep(bytes calldata performData) external {
         (bool upkeepNeeded, ) = checkUpkeep("");
         if (!upkeepNeeded) {
             revert Raffle_UpkeepNotNeeded(
@@ -154,5 +154,9 @@ abstract contract Raffle is VRFConsumerBaseV2Plus {
     /* Getter Functions */
     function getEntranceFee() public view returns (uint256) {
         return i_entranceFee;
+    }
+
+    function getRaffleState() external view returns(RaffleState){
+        return s_raffleState;
     }
 }
