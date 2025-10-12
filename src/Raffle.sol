@@ -16,7 +16,11 @@ abstract contract Raffle is VRFConsumerBaseV2Plus {
     error SendMoreEthToRaffle();
     error TransferFailed();
     error RaffleNotOpen();
-    error Raffle_UpkeepNotNeeded(uint256 currentBalance, uint256 numPlayers, uint256 raffleState);
+    error Raffle_UpkeepNotNeeded(
+        uint256 currentBalance,
+        uint256 numPlayers,
+        uint256 raffleState
+    );
 
     /* Type Declarations */
     enum RaffleState {
@@ -48,9 +52,11 @@ abstract contract Raffle is VRFConsumerBaseV2Plus {
         address s_vrfCoordinator,
         bytes32 gasLane,
         uint256 subscriptionId,
-        uint32 callbackGasLimit 
+        uint32 callbackGasLimit
+    )
         /* @dev Inheritance Chainlink VRF library, also need to inheritance the library constructor */
-    ) VRFConsumerBaseV2Plus(s_vrfCoordinator) {
+        VRFConsumerBaseV2Plus(s_vrfCoordinator)
+    {
         i_keyHash = gasLane;
         i_subscriptionId = subscriptionId;
         i_callbackGasLimit = callbackGasLimit;
@@ -75,17 +81,19 @@ abstract contract Raffle is VRFConsumerBaseV2Plus {
     }
 
     /**
- * @dev This is the function that the Chainlink Keeper nodes will cal to see
- * if the lottery is ready to have winner picked,
- * the following should be true in order to for upkeepNeeded to be true:
- * 1. The time interval has passed between raffle runs.
- * 2. The lottery is in an "open" state.
- * 3. The contract has ETH.
- * 4. Implicity, your subscription is funded with LINK.
- * @param checkData This is the data the keeper nodes will
- * @return upkeepNeeded - true if it is time to restart the lottery
- */
-    function checkUpkeep(bytes memory checkData)public view returns (bool upkeepNeeded, bytes memory performData){
+     * @dev This is the function that the Chainlink Keeper nodes will cal to see
+     * if the lottery is ready to have winner picked,
+     * the following should be true in order to for upkeepNeeded to be true:
+     * 1. The time interval has passed between raffle runs.
+     * 2. The lottery is in an "open" state.
+     * 3. The contract has ETH.
+     * 4. Implicity, your subscription is funded with LINK.
+     * @param checkData This is the data the keeper nodes will
+     * @return upkeepNeeded - true if it is time to restart the lottery
+     **/
+    function checkUpkeep(
+        bytes memory /*checkData*/
+    ) public view returns (bool upkeepNeeded, bytes memory /*performData*/) {
         // Check to see if enough time has passed
         bool timeHsPassed = ((block.timestamp - s_lastTimeStamp) >= i_interval);
         bool isOpen = s_raffleState == RaffleState.OPEN;
@@ -96,12 +104,16 @@ abstract contract Raffle is VRFConsumerBaseV2Plus {
         return (upkeepNeeded, "");
     }
 
-    function performUpkeep(bytes calldata performData) external {
+    function performUpkeep(bytes calldata /*performData*/) external {
         (bool upkeepNeeded, ) = checkUpkeep("");
-        if(!upkeepNeeded){
-            revert Raffle_UpkeepNotNeeded(address(this).balance, s_players.length, uint256(s_raffleState));
+        if (!upkeepNeeded) {
+            revert Raffle_UpkeepNotNeeded(
+                address(this).balance,
+                s_players.length,
+                uint256(s_raffleState)
+            );
         }
-        
+
         s_raffleState = RaffleState.CALCULATING;
 
         VRFV2PlusClient.RandomWordsRequest memory request = VRFV2PlusClient
@@ -120,7 +132,7 @@ abstract contract Raffle is VRFConsumerBaseV2Plus {
     }
 
     function fulfillRandomWords(
-        uint256 _requestId,
+        uint256 /*_requestId*/,
         uint256[] calldata randomWords
     ) internal override {
         uint256 indexOfWinner = randomWords[0] % s_players.length;

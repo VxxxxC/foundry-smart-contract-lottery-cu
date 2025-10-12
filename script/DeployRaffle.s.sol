@@ -12,28 +12,27 @@ contract DeployRaffle is Script {
         AddConsumer addConsumer = new AddConsumer();
         HelperConfig.NetworkConfig memory config = helperConfig.getConfig();
 
-        if (config.subscriptionId == 0) {
-            CreateSubscription createSubscription = new CreateSubscription();
-            (config.subscriptionId, config.vrfCoordinatorV2_5) =
-                createSubscription.createSubscription(config.vrfCoordinatorV2_5, config.account);
+        // if (config.subscriptionId == 0) {
+        //     CreateSubscription createSubscription = new CreateSubscription();
+        //     (config.subscriptionId, config.vrfCoordinatorV2_5) =
+        //         createSubscription.createSubscription(config.vrfCoordinatorV2_5, config.account);
 
-            FundSubscription fundSubscription = new FundSubscription();
-            fundSubscription.fundSubscription(
-                config.vrfCoordinatorV2_5, config.subscriptionId, config.link, config.account
-            );
+        //     FundSubscription fundSubscription = new FundSubscription();
+        //     fundSubscription.fundSubscription(
+        //         config.vrfCoordinatorV2_5, config.subscriptionId, config.link, config.account
+        //     );
 
-            helperConfig.setConfig(block.chainid, config);
-        }
+        //     helperConfig.setConfig(block.chainid, config);
+        // }
 
         vm.startBroadcast(config.account);
         Raffle raffle = new Raffle(
-            0.01 ether
-            // config.subscriptionId,
-            // config.gasLane,
-            // config.automationUpdateInterval,
-            // config.raffleEntranceFee,
-            // config.callbackGasLimit,
-            // config.vrfCoordinatorV2_5
+            config.subscriptionId,
+            config.gasLane,
+            config.automationUpdateInterval,
+            config.raffleEntranceFee,
+            config.callbackGasLimit,
+            config.vrfCoordinatorV2_5
         );
         vm.stopBroadcast();
 
