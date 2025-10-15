@@ -61,26 +61,26 @@ contract RaffleTest is Test, CodeConstants {
         assert(raffle.getRaffleState() == Raffle.RaffleState.OPEN);
     }
 
-    // /*//////////////////////////////////////////////////////////////
-    //                           ENTER RAFFLE
-    // //////////////////////////////////////////////////////////////*/
-    // function testRaffleRevertsWHenYouDontPayEnough() public {
-    //     // Arrange
-    //     vm.prank(PLAYER);
-    //     // Act / Assert
-    //     // vm.expectRevert(Raffle.Raffle__SendMoreToEnterRaffle.selector);
-    //     raffle.enterRaffle();
-    // }
+    /*//////////////////////////////////////////////////////////////
+                              ENTER RAFFLE
+    //////////////////////////////////////////////////////////////*/
+    function testRaffleRevertsWHenYouDontPayEnough() public {
+        // Arrange
+        vm.prank(PLAYER);
+        // Act / Assert
+        vm.expectRevert(Raffle.SendMoreEthToRaffle.selector);
+        raffle.enterRaffle();
+    }
 
-    // function testRaffleRecordsPlayerWhenTheyEnter() public {
-    //     // Arrange
-    //     vm.prank(PLAYER);
-    //     // Act
-    //     raffle.enterRaffle{value: raffleEntranceFee}();
-    //     // Assert
-    //     // address playerRecorded = raffle.getPlayer(0);
-    //     // assert(playerRecorded == PLAYER);
-    // }
+    function testRaffleRecordsPlayerWhenTheyEnter() public {
+        // Arrange
+        vm.prank(PLAYER);
+        // Act
+        raffle.enterRaffle{value: raffleEntranceFee}();
+        // Assert
+        address playerRecorded = raffle.getPlayer(0);
+        assert(playerRecorded == PLAYER);
+    }
 
     // function testEmitsEventOnEntrance() public {
     //     // Arrange
