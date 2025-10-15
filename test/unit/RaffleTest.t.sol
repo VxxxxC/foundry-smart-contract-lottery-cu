@@ -87,25 +87,27 @@ contract RaffleTest is Test, CodeConstants {
         vm.prank(PLAYER);
 
         // Act / Assert
-        vm.expectEmit(address(raffle));
+        vm.expectEmit(true,false,false,false,address(raffle));
         emit RaffleEntered(PLAYER);
         // Assert
         raffle.enterRaffle{value: raffleEntranceFee}();
     }
 
-    // function testDontAllowPlayersToEnterWhileRaffleIsCalculating() public {
-    //     // Arrange
-    //     vm.prank(PLAYER);
-    //     raffle.enterRaffle{value: raffleEntranceFee}();
-    //     vm.warp(block.timestamp + automationUpdateInterval + 1);
-    //     vm.roll(block.number + 1);
-    //     raffle.performUpkeep("");
+    function testDontAllowPlayersToEnterWhileRaffleIsCalculating() public {
+        // Arrange
+        vm.prank(PLAYER);
+        raffle.enterRaffle{value: raffleEntranceFee}();
+        
+        // Wait
+        vm.warp(block.timestamp + automationUpdateInterval + 1); // set timestamp
+        vm.roll(block.number + 1); // set block number
+        raffle.performUpkeep("");
 
-    //     // Act / Assert
-    //     // vm.expectRevert(Raffle.Raffle__RaffleNotOpen.selector);
-    //     vm.prank(PLAYER);
-    //     raffle.enterRaffle{value: raffleEntranceFee}();
-    // }
+        // Act / Assert
+        vm.expectRevert(Raffle.RaffleNotOpen.selector);
+        vm.prank(PLAYER);
+        raffle.enterRaffle{value: raffleEntranceFee}();
+    }
 
     // /*//////////////////////////////////////////////////////////////
     //                           CHECKUPKEEP
