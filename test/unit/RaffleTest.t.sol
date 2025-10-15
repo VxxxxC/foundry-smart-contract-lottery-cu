@@ -16,7 +16,7 @@ contract RaffleTest is Test, CodeConstants {
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
     event RequestedRaffleWinner(uint256 indexed requestId);
-    event RaffleEnter(address indexed player);
+    event RaffleEntered(address indexed player);
     event WinnerPicked(address indexed player);
 
     Raffle public raffle;
@@ -82,15 +82,16 @@ contract RaffleTest is Test, CodeConstants {
         assert(playerRecorded == PLAYER);
     }
 
-    // function testEmitsEventOnEntrance() public {
-    //     // Arrange
-    //     vm.prank(PLAYER);
+    function testEmitsEventOnEntrance() public {
+        // Arrange
+        vm.prank(PLAYER);
 
-    //     // Act / Assert
-    //     vm.expectEmit(true, false, false, false, address(raffle));
-    //     emit RaffleEnter(PLAYER);
-    //     raffle.enterRaffle{value: raffleEntranceFee}();
-    // }
+        // Act / Assert
+        vm.expectEmit(address(raffle));
+        emit RaffleEntered(PLAYER);
+        // Assert
+        raffle.enterRaffle{value: raffleEntranceFee}();
+    }
 
     // function testDontAllowPlayersToEnterWhileRaffleIsCalculating() public {
     //     // Arrange
