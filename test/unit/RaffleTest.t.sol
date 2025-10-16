@@ -112,17 +112,17 @@ contract RaffleTest is Test, CodeConstants {
     // /*//////////////////////////////////////////////////////////////
     //                           CHECKUPKEEP
     // //////////////////////////////////////////////////////////////*/
-    // function testCheckUpkeepReturnsFalseIfItHasNoBalance() public {
-    //     // Arrange
-    //     vm.warp(block.timestamp + automationUpdateInterval + 1);
-    //     vm.roll(block.number + 1);
+    function testCheckUpkeepReturnsFalseIfItHasNoBalance() public {
+        // Arrange
+        vm.warp(block.timestamp + automationUpdateInterval + 1);
+        vm.roll(block.number + 1);
 
-    //     // Act
-    //     (bool upkeepNeeded,) = raffle.checkUpkeep("");
+        // Act
+        (bool upkeepNeeded,) = raffle.checkUpkeep("");
 
-    //     // Assert
-    //     assert(!upkeepNeeded);
-    // }
+        // Assert
+        assert(!upkeepNeeded);
+    }
 
     // function testCheckUpkeepReturnsFalseIfRaffleIsntOpen() public {
     //     // Arrange
