@@ -33,30 +33,31 @@ contract CreateSubscription is Script {
     }
 }
 
-// contract AddConsumer is Script {
-//     function addConsumer(address contractToAddToVrf, address vrfCoordinator, uint256 subId, address account) public {
-//         console.log("Adding consumer contract: ", contractToAddToVrf);
-//         console.log("Using vrfCoordinator: ", vrfCoordinator);
-//         console.log("On ChainID: ", block.chainid);
-//         vm.startBroadcast(account);
-//         VRFCoordinatorV2_5Mock(vrfCoordinator).addConsumer(subId, contractToAddToVrf);
-//         vm.stopBroadcast();
-//     }
+contract AddConsumer is Script {
+    
+    function addConsumerUsingConfig(address mostRecentlyDeployed) public {
+        HelperConfig helperConfig = new HelperConfig();
+        uint256 subId = helperConfig.getConfig().subscriptionId;
+        address vrfCoordinatorV2_5 = helperConfig.getConfig().vrfCoordinatorV2_5;
+        // address account = helperConfig.getConfig().account;
 
-//     function addConsumerUsingConfig(address mostRecentlyDeployed) public {
-//         HelperConfig helperConfig = new HelperConfig();
-//         uint256 subId = helperConfig.getConfig().subscriptionId;
-//         address vrfCoordinatorV2_5 = helperConfig.getConfig().vrfCoordinatorV2_5;
-//         address account = helperConfig.getConfig().account;
+        addConsumer(mostRecentlyDeployed, vrfCoordinatorV2_5, subId);
+    }
+    
+    function addConsumer(address contractToAddToVrf, address vrfCoordinator, uint256 subId) public {
+        console.log("Adding consumer contract: ", contractToAddToVrf);
+        console.log("Using vrfCoordinator: ", vrfCoordinator);
+        console.log("On ChainID: ", block.chainid);
+        vm.startBroadcast();
+        VRFCoordinatorV2_5Mock(vrfCoordinator).addConsumer(subId, contractToAddToVrf);
+        vm.stopBroadcast();
+    }
 
-//         addConsumer(mostRecentlyDeployed, vrfCoordinatorV2_5, subId, account);
-//     }
-
-//     function run() external {
-//         address mostRecentlyDeployed = DevOpsTools.get_most_recent_deployment("Raffle", block.chainid);
-//         addConsumerUsingConfig(mostRecentlyDeployed);
-//     }
-// }
+    function run() external {
+        address mostRecentlyDeployed = DevOpsTools.get_most_recent_deployment("Raffle", block.chainid);
+        addConsumerUsingConfig(mostRecentlyDeployed);
+    }
+}
 
 contract FundSubscription is CodeConstants, Script {
     uint96 public constant FUND_AMOUNT = 3 ether;
