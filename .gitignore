@@ -16,3 +16,6 @@ docs/
 
 # zkSync
 zkout/
+
+# IDE
+.vscode/
