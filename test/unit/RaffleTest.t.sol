@@ -201,13 +201,7 @@ contract RaffleTest is Test, CodeConstants {
         raffle.performUpkeep("");
     }
 
-    function testPerformUpkeepUpdatesRaffleStateAndEmitsRequestId() public {
-        // Arrange
-        vm.prank(PLAYER);
-        raffle.enterRaffle{value: raffleEntranceFee}();
-        vm.warp(block.timestamp + automationUpdateInterval + 1);
-        vm.roll(block.number + 1);
-
+    function testPerformUpkeepUpdatesRaffleStateAndEmitsRequestId() public raffleEntered {
         // Act
         vm.recordLogs();
         raffle.performUpkeep(""); // emits requestId
@@ -222,16 +216,16 @@ contract RaffleTest is Test, CodeConstants {
         assert(uint256(raffleState) == 1); // 0 = open, 1 = calculating
     }
 
-    // /*//////////////////////////////////////////////////////////////
-    //                        FULFILLRANDOMWORDS
-    // //////////////////////////////////////////////////////////////*/
-    // modifier raffleEntered() {
-    //     vm.prank(PLAYER);
-    //     raffle.enterRaffle{value: raffleEntranceFee}();
-    //     vm.warp(block.timestamp + automationUpdateInterval + 1);
-    //     vm.roll(block.number + 1);
-    //     _;
-    // }
+    /*//////////////////////////////////////////////////////////////
+                           FULFILLRANDOMWORDS
+    //////////////////////////////////////////////////////////////*/
+    modifier raffleEntered() {
+        vm.prank(PLAYER);
+        raffle.enterRaffle{value: raffleEntranceFee}();
+        vm.warp(block.timestamp + automationUpdateInterval + 1);
+        vm.roll(block.number + 1);
+        _;
+    }
 
     // modifier skipFork() {
     //     if (block.chainid != 31337) {
