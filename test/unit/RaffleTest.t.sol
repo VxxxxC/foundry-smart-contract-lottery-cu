@@ -2,6 +2,7 @@
 
 pragma solidity ^0.8.19;
 
+import {Script, console} from "forge-std/Script.sol";
 import {DeployRaffle} from "../../script/DeployRaffle.s.sol";
 import {Raffle} from "../../src/Raffle.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
@@ -200,25 +201,26 @@ contract RaffleTest is Test, CodeConstants {
         raffle.performUpkeep("");
     }
 
-    // function testPerformUpkeepUpdatesRaffleStateAndEmitsRequestId() public {
-    //     // Arrange
-    //     vm.prank(PLAYER);
-    //     raffle.enterRaffle{value: raffleEntranceFee}();
-    //     vm.warp(block.timestamp + automationUpdateInterval + 1);
-    //     vm.roll(block.number + 1);
+    function testPerformUpkeepUpdatesRaffleStateAndEmitsRequestId() public {
+        // Arrange
+        vm.prank(PLAYER);
+        raffle.enterRaffle{value: raffleEntranceFee}();
+        vm.warp(block.timestamp + automationUpdateInterval + 1);
+        vm.roll(block.number + 1);
 
-    //     // Act
-    //     vm.recordLogs();
-    //     raffle.performUpkeep(""); // emits requestId
-    //     Vm.Log[] memory entries = vm.getRecordedLogs();
-    //     bytes32 requestId = entries[1].topics[1];
+        // Act
+        vm.recordLogs();
+        raffle.performUpkeep(""); // emits requestId
+        Vm.Log[] memory entries = vm.getRecordedLogs();
+        console.log("entries : ");
+        bytes32 requestId = entries[1].topics[1];
 
-    //     // Assert
-    //     Raffle.RaffleState raffleState = raffle.getRaffleState();
-    //     // requestId = raffle.getLastRequestId();
-    //     assert(uint256(requestId) > 0);
-    //     assert(uint256(raffleState) == 1); // 0 = open, 1 = calculating
-    // }
+        // Assert
+        Raffle.RaffleState raffleState = raffle.getRaffleState();
+        // requestId = raffle.getLastRequestId();
+        assert(uint256(requestId) > 0);
+        assert(uint256(raffleState) == 1); // 0 = open, 1 = calculating
+    }
 
     // /*//////////////////////////////////////////////////////////////
     //                        FULFILLRANDOMWORDS
