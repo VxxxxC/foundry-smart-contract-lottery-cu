@@ -167,32 +167,38 @@ contract RaffleTest is Test, CodeConstants {
     //     assert(upkeepNeeded);
     // }
 
-    // /*//////////////////////////////////////////////////////////////
-    //                          PERFORMUPKEEP
-    // //////////////////////////////////////////////////////////////*/
-    // function testPerformUpkeepCanOnlyRunIfCheckUpkeepIsTrue() public {
-    //     // Arrange
-    //     vm.prank(PLAYER);
-    //     raffle.enterRaffle{value: raffleEntranceFee}();
-    //     vm.warp(block.timestamp + automationUpdateInterval + 1);
-    //     vm.roll(block.number + 1);
+    /*//////////////////////////////////////////////////////////////
+                             PERFORMUPKEEP
+    //////////////////////////////////////////////////////////////*/
+    function testPerformUpkeepCanOnlyRunIfCheckUpkeepIsTrue() public {
+        // Arrange
+        vm.prank(PLAYER);
+        raffle.enterRaffle{value: raffleEntranceFee}();
+        vm.warp(block.timestamp + automationUpdateInterval + 1);
+        vm.roll(block.number + 1);
 
-    //     // Act / Assert
-    //     // It doesnt revert
-    //     raffle.performUpkeep("");
-    // }
+        // Act / Assert
+        // It doesnt revert
+        raffle.performUpkeep("");
+    }
 
-    // function testPerformUpkeepRevertsIfCheckUpkeepIsFalse() public {
-    //     // Arrange
-    //     uint256 currentBalance = 0;
-    //     uint256 numPlayers = 0;
-    //     Raffle.RaffleState rState = raffle.getRaffleState();
-    //     // Act / Assert
-    //     // vm.expectRevert(
-    //     //     abi.encodeWithSelector(Raffle.Raffle__UpkeepNotNeeded.selector, currentBalance, numPlayers, rState)
-    //     // );
-    //     raffle.performUpkeep("");
-    // }
+    function testPerformUpkeepRevertsIfCheckUpkeepIsFalse() public {
+        // Arrange
+        uint256 currentBalance = 0;
+        uint256 numPlayers = 0;
+        Raffle.RaffleState rState = raffle.getRaffleState();
+
+        vm.prank(PLAYER);
+        raffle.enterRaffle{value: raffleEntranceFee}();
+        currentBalance += raffleEntranceFee;
+        numPlayers += 1;
+
+        // Act / Assert
+        vm.expectRevert(
+            abi.encodeWithSelector(Raffle.RaffleUpkeepNotNeeded.selector, currentBalance, numPlayers, rState)
+        );
+        raffle.performUpkeep("");
+    }
 
     // function testPerformUpkeepUpdatesRaffleStateAndEmitsRequestId() public {
     //     // Arrange

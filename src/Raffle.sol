@@ -16,7 +16,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
     error SendMoreEthToRaffle();
     error TransferFailed();
     error RaffleNotOpen();
-    error Raffle_UpkeepNotNeeded(
+    error RaffleUpkeepNotNeeded(
         uint256 currentBalance,
         uint256 numPlayers,
         uint256 raffleState
@@ -107,7 +107,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
     function performUpkeep(bytes calldata performData) external {
         (bool upkeepNeeded, ) = checkUpkeep("");
         if (!upkeepNeeded) {
-            revert Raffle_UpkeepNotNeeded(
+            revert RaffleUpkeepNotNeeded(
                 address(this).balance,
                 s_players.length,
                 uint256(s_raffleState)
