@@ -7,7 +7,7 @@ import {Raffle} from "../src/Raffle.sol";
 import {CreateSubscription, FundSubscription, AddConsumer} from "./Interactions.s.sol";
 
 contract DeployRaffle is Script {
-    function deployContract() external returns (Raffle, HelperConfig) {
+    function deployContract() private returns (Raffle, HelperConfig) {
         HelperConfig helperConfig = new HelperConfig(); // This comes with our mocks!
         // AddConsumer addConsumer = new AddConsumer();
         HelperConfig.NetworkConfig memory config = helperConfig.getConfig();
@@ -51,5 +51,9 @@ contract DeployRaffle is Script {
         addConsumer.addConsumer(address(raffle), config.vrfCoordinatorV2_5, config.subscriptionId, config.account);
         // We already have a broadcast in here, Consumer already has vm.startBroadcast()
         return (raffle, helperConfig);
+    }
+
+    function run() external returns (Raffle, HelperConfig) {
+        return deployContract();
     }
 }
