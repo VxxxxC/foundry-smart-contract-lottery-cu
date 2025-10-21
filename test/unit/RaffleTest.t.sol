@@ -245,41 +245,40 @@ contract RaffleTest is Test, CodeConstants {
  
     }
 
-    // function testFulfillRandomWordsPicksAWinnerResetsAndSendsMoney() public raffleEntered skipFork {
-    //     address expectedWinner = address(1);
+    function testFulfillRandomWordsPicksAWinnerResetsAndSendsMoney() public raffleEntered {
+        address expectedWinner = address(1);
 
-    //     // Arrange
-    //     uint256 additionalEntrances = 3;
-    //     uint256 startingIndex = 1; // We have starting index be 1 so we can start with address(1) and not address(0)
+        // Arrange
+        uint256 additionalEntrances = 3;
+        uint256 startingIndex = 1; // We have starting index be 1 so we can start with address(1) and not address(0)
 
-    //     for (uint256 i = startingIndex; i < startingIndex + additionalEntrances; i++) {
-    //         address player = address(uint160(i));
-    //         hoax(player, 1 ether); // deal 1 eth to the player
-    //         raffle.enterRaffle{value: raffleEntranceFee}();
-    //     }
+        for (uint256 i = startingIndex; i < startingIndex + additionalEntrances; i++) {
+            address player = address(uint160(i));
+            hoax(player, 1 ether); // deal 1 eth to the player
+            raffle.enterRaffle{value: raffleEntranceFee}();
+        }
 
-    //     // uint256 startingTimeStamp = raffle.getLastTimeStamp();
-    //     uint256 startingBalance = expectedWinner.balance;
+        uint256 startingTimeStamp = raffle.getLastTimeStamp();
+        uint256 startingBalance = expectedWinner.balance;
 
-    //     // Act
-    //     vm.recordLogs();
-    //     raffle.performUpkeep(""); // emits requestId
-    //     Vm.Log[] memory entries = vm.getRecordedLogs();
-    //     console2.logBytes32(entries[1].topics[1]);
-    //     bytes32 requestId = entries[1].topics[1]; // get the requestId from the logs
+        // Act
+        vm.recordLogs();
+        raffle.performUpkeep(""); // emits requestId
+        Vm.Log[] memory entries = vm.getRecordedLogs();
+        bytes32 requestId = entries[1].topics[1]; // get the requestId from the logs
 
-    //     VRFCoordinatorV2_5Mock(vrfCoordinatorV2_5).fulfillRandomWords(uint256(requestId), address(raffle));
+        VRFCoordinatorV2_5Mock(vrfCoordinatorV2_5).fulfillRandomWords(uint256(requestId), address(raffle));
 
-    //     // Assert
-    //     // address recentWinner = raffle.getRecentWinner();
-    //     Raffle.RaffleState raffleState = raffle.getRaffleState();
-    //     // uint256 winnerBalance = recentWinner.balance;
-    //     // uint256 endingTimeStamp = raffle.getLastTimeStamp();
-    //     uint256 prize = raffleEntranceFee * (additionalEntrances + 1);
+        // Assert
+        address recentWinner = raffle.getRecentWinner();
+        Raffle.RaffleState raffleState = raffle.getRaffleState();
+        uint256 winnerBalance = recentWinner.balance;
+        uint256 endingTimeStamp = raffle.getLastTimeStamp();
+        uint256 prize = raffleEntranceFee * (additionalEntrances + 1);
 
-    //     // assert(recentWinner == expectedWinner);
-    //     assert(uint256(raffleState) == 0);
-    //     // assert(winnerBalance == startingBalance + prize);
-    //     // assert(endingTimeStamp > startingTimeStamp);
-    // }
+        assert(recentWinner == expectedWinner);
+        assert(uint256(raffleState) == 0);
+        assert(winnerBalance == startingBalance + prize);
+        assert(endingTimeStamp > startingTimeStamp);
+    }
 }
