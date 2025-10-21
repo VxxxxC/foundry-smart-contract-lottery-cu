@@ -206,7 +206,6 @@ contract RaffleTest is Test, CodeConstants {
         vm.recordLogs();
         raffle.performUpkeep(""); // emits requestId
         Vm.Log[] memory entries = vm.getRecordedLogs();
-        console.log("entries : ");
         bytes32 requestId = entries[1].topics[1];
 
         // Assert
@@ -217,7 +216,7 @@ contract RaffleTest is Test, CodeConstants {
     }
 
     /*//////////////////////////////////////////////////////////////
-                           FULFILLRANDOMWORDS
+                           MODIFIERS
     //////////////////////////////////////////////////////////////*/
     modifier raffleEntered() {
         vm.prank(PLAYER);
@@ -234,16 +233,17 @@ contract RaffleTest is Test, CodeConstants {
     //     _;
     // }
 
-    // function testFulfillRandomWordsCanOnlyBeCalledAfterPerformUpkeep() public raffleEntered skipFork {
-    //     // Arrange
-    //     // Act / Assert
-    //     vm.expectRevert(VRFCoordinatorV2_5Mock.InvalidRequest.selector);
-    //     // vm.mockCall could be used here...
-    //     VRFCoordinatorV2_5Mock(vrfCoordinatorV2_5).fulfillRandomWords(0, address(raffle));
-
-    //     vm.expectRevert(VRFCoordinatorV2_5Mock.InvalidRequest.selector);
-    //     VRFCoordinatorV2_5Mock(vrfCoordinatorV2_5).fulfillRandomWords(1, address(raffle));
-    // }
+    /*//////////////////////////////////////////////////////////////
+                           FULFILLRANDOMWORDS
+    //////////////////////////////////////////////////////////////*/
+    function testFulfillRandomWordsCanOnlyBeCalledAfterPerformUpkeep(uint256 randomRequestId) public raffleEntered {
+        // Arrange
+        // Act / Assert
+        vm.expectRevert(VRFCoordinatorV2_5Mock.InvalidRequest.selector);
+        // vm.mockCall could be used here...
+        VRFCoordinatorV2_5Mock(vrfCoordinatorV2_5).fulfillRandomWords(randomRequestId, address(raffle));
+ 
+    }
 
     // function testFulfillRandomWordsPicksAWinnerResetsAndSendsMoney() public raffleEntered skipFork {
     //     address expectedWinner = address(1);
