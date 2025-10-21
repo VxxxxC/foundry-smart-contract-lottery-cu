@@ -37,7 +37,7 @@ contract RaffleTest is Test, CodeConstants {
 
     function setUp() external {
         DeployRaffle deployer = new DeployRaffle();
-        (raffle, helperConfig) = deployer.deployContract();
+        (raffle, helperConfig) = deployer.run();
         vm.deal(PLAYER, STARTING_USER_BALANCE);
 
         HelperConfig.NetworkConfig memory config = helperConfig.getConfig();
